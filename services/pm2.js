@@ -1,10 +1,12 @@
 var os = require('os');
 var config = require('config');
+var rl = require('read-last-lines');
 var pm2 = require('pm2');
 var PushBullet = require('pushbullet');
 var apiKey = config.get("messaging.pushbullet.apikey");
 var pusher = new PushBullet(apiKey);
 var allDevices = '';
+var appLogHash = {};	// { pm_id: {id: pm_id, name: name, err_log: pm2_env.pm_err_log_path, out_log: pm_out_log_path}}
 
 pm2.connect(function() {
 	pm2.launchBus(function(err, bus) {
@@ -17,9 +19,8 @@ pm2.connect(function() {
 			//console.log("error on: " + packet.process.name);
 			//console.log("pm2 packet data: " + packet.data);
 			//console.log("pm2 packet: " + JSON.stringify(packet));
-			console.log(packet);
 			console.log(packet.process.pm_id + ": " + packet.process.name + ": " + packet.event);
-			if (packet.process.pm_id != 0) {
+			if (packet.process.pm_id != 0 && packet.event == "restart") {
 				pushMsg(packet, function(err, ret) {
 					console.log(ret);
 				});
@@ -41,9 +42,12 @@ pm2.connect(function() {
 	pm2.list(function(err, list) {
 		list.forEach(function(app, i) {
 			//console.log(app.pid + ", " + app.name);
-			pm2.describe(app.name, function(err, desc) {
-				//console.log(desc);
+			appLogHash[app.pm_id] = {id: app.pm_id, name: app.name, out_log: app.pm2_env.pm_out_log_path, err_log: app.pm2_env.pm_err_log_path};
+			/*
+			pm2.describe(app.pm_id, function(err, desc) {
+				console.log(desc);
 			});
+			*/
 		});
 	});
 });
@@ -68,16 +72,20 @@ function pushMsg(packet, cb) {
 	var appname = packet.process.name;
 	var event = packet.event;
 
-	var title = "service on " + host + " " + event;
-	var message = appname + "(" + appid + "): " + event;
-	pusher.note(allDevices, title, message, function(error, response) {
-		if (error) {
-			console.error('error: ' + error);
-			cb(error, null);
-		} else {
-			console.log('res: ' + JSON.stringify(response));
-			cb(null, response);
-		}
+	rl.read(appLogHash[appid].err_log, 10).then(function(log) {
+		console.log(appLogHash[appid].err_log);
+		var title = "service on " + host + " " + event;
+		var message = appname + "(" + appid + "): " + event + " \n" + log;
+		console.log("push message: " + message);
+		pusher.note(allDevices, title, message, function(error, response) {
+			if (error) {
+				console.error('error: ' + error);
+				cb(error, null);
+			} else {
+				console.log('res: ' + JSON.stringify(response));
+				cb(null, response);
+			}
+		});
 	});
 }
 
