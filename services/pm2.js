@@ -1,10 +1,14 @@
 var os = require('os');
 var config = require('config');
+var request = require('request');
 var rl = require('read-last-lines');
 var pm2 = require('pm2');
 var PushBullet = require('pushbullet');
 var apiKey = config.get("messaging.pushbullet.apikey");
 var pusher = new PushBullet(apiKey);
+var telegram_endpoint = "https://api.telegram.org/bot";
+var telegram_apikey = config.get("messaging.telegram.apikey");
+var telegram_admin = config.get("messaging.telegram.admin");
 var allDevices = '';
 var appLogHash = {};	// { pm_id: {id: pm_id, name: name, err_log: pm2_env.pm_err_log_path, out_log: pm_out_log_path}}
 
@@ -74,9 +78,10 @@ function pushMsg(packet, cb) {
 
 	rl.read(appLogHash[appid].err_log, 10).then(function(log) {
 		console.log(appLogHash[appid].err_log);
-		var title = "service on " + host + " " + event;
+		var title = "service " + appname + " on " + host + " " + event;
 		var message = appname + "(" + appid + "): " + event + " \n" + log;
 		console.log("push message: " + message);
+		// pushbullet
 		pusher.note(allDevices, title, message, function(error, response) {
 			if (error) {
 				console.error('error: ' + error);
@@ -85,6 +90,10 @@ function pushMsg(packet, cb) {
 				console.log('res: ' + JSON.stringify(response));
 				cb(null, response);
 			}
+		});
+		// Telegram
+		var telegram_push = telegram_endpoint + telegram_apikey + "/sendMessage?chat_id=" + telegram_admin + "&text=";
+		request({url: telegram_push + title, rejectUnauthorized: false}, function(err, res, body) {
 		});
 	});
 }

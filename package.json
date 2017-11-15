@@ -16,6 +16,7 @@
 		"pm2": "*",
 		"pushbullet": "*",
 		"config": "*",
-		"read-last-lines": "*"
+		"read-last-lines": "*",
+		"request": "*"
 	}
 }
