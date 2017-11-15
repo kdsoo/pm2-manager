@@ -9,6 +9,9 @@ var allDevices = '';
 pm2.connect(function() {
 	pm2.launchBus(function(err, bus) {
 		console.log('[PM2] Log streaming started');
+		getPushDevices(function(err, ret) {
+			console.log("Get clients to be notified done");
+		});
 
 		bus.on("process:event", function(packet) {
 			//console.log("error on: " + packet.process.name);
@@ -16,6 +19,9 @@ pm2.connect(function() {
 			//console.log("pm2 packet: " + JSON.stringify(packet));
 			console.log(packet);
 			console.log(packet.process.pm_id + ": " + packet.process.name + ": " + packet.event);
+			pushMsg(packet, function(err, ret) {
+				console.log(ret);
+			});
 		});
 
 		/*
@@ -40,16 +46,21 @@ pm2.connect(function() {
 	});
 });
 
-function getPushDevices() {
+function getPushDevices(cb) {
 	pusher.devices(function(error, response) {
-		// response is the JSON response from the API
-		console.log(response);
-		allDevices = response.devices;
-
+		if (error) {
+			cb(error, null);
+		} else {
+			response.devices.forEach(function(d, i) {
+				console.log("pushbullet registered devices: " + d.nickname);
+			});
+			allDevices = response.devices;
+			cb(null, response);
+		}
 	});
 }
 
-function pushMsg(packet) {
+function pushMsg(packet, cb) {
 	var host = os.hostname();
 	var appid = packet.process.pm_id;
 	var appname = packet.process.name;
@@ -58,8 +69,13 @@ function pushMsg(packet) {
 	var title = "service on " + host + " " + event;
 	var message = appname + "(" + appid + "): " + event;
 	pusher.note(allDevices, title, message, function(error, response) {
-		if (error) console.error('error: ' + error);
-		console.log('res: ' + JSON.stringify(response));
+		if (error) {
+			console.error('error: ' + error);
+			cb(error, null);
+		} else {
+			console.log('res: ' + JSON.stringify(response));
+			cb(null, response);
+		}
 	});
 }
 
