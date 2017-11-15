@@ -19,9 +19,11 @@ pm2.connect(function() {
 			//console.log("pm2 packet: " + JSON.stringify(packet));
 			console.log(packet);
 			console.log(packet.process.pm_id + ": " + packet.process.name + ": " + packet.event);
-			pushMsg(packet, function(err, ret) {
-				console.log(ret);
-			});
+			if (packet.process.pm_id != 0) {
+				pushMsg(packet, function(err, ret) {
+					console.log(ret);
+				});
+			}
 		});
 
 		/*
