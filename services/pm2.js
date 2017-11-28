@@ -24,7 +24,7 @@ pm2.connect(function() {
 			//console.log("pm2 packet data: " + packet.data);
 			//console.log("pm2 packet: " + JSON.stringify(packet));
 			console.log(packet.process.pm_id + ": " + packet.process.name + ": " + packet.event);
-			if (packet.process.pm_id != 0 && packet.event == "restart") {
+			if (packet.process.pm_id != 0 && packet.event == "online") {
 				pushMsg(packet, function(err, ret) {
 					console.log(ret);
 				});
