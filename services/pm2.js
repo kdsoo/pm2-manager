@@ -17,6 +17,7 @@ pm2.connect(function() {
 		console.log('[PM2] Log streaming started');
 		getPushDevices(function(err, ret) {
 			console.log("Get clients to be notified done");
+			pm2InitNotify();
 		});
 
 		bus.on("process:event", function(packet) {
@@ -98,6 +99,25 @@ function pushMsg(packet, cb) {
 	});
 }
 
+function pm2InitNotify() {
+	var host = os.hostname();
+	var title = "PM2 on " + host + " intialized";
+	var message = title;
+	console.log("push message: " + message);
+
+	pusher.note(allDevices, title, message, function(error, response) {
+		if (error) {
+			console.error('error: ' + error);
+		} else {
+			console.log('res: ' + JSON.stringify(response));
+		}
+	});
+	// Telegram
+	var telegram_push = telegram_endpoint + telegram_apikey + "/sendMessage?chat_id=" + telegram_admin + "&text=";
+	request({url: telegram_push + title, rejectUnauthorized: false}, function(err, res, body) {
+	});
+
+}
 pusher.devices(function(error, response) {
 	// response is the JSON response from the API
 	//console.log(response);
