@@ -17,7 +17,7 @@ pm2.connect(function() {
 		console.log('[PM2] Log streaming started');
 		getPushDevices(function(err, ret) {
 			console.log("Get clients to be notified done");
-			//pm2InitNotify(); // FIXME
+			pm2InitNotify(); // FIXME
 		});
 
 		bus.on("process:event", function(packet) {
