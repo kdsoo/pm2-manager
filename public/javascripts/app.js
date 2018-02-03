@@ -9,5 +9,14 @@ $(document).ready(function () {
 
 function showHost(host) {
 	var holder = document.getElementById("health");
-	holder.innerHTML += "<p>" + host + "</p>";
+	var hostdiv = document.createElement("div");
+	var hosttext = document.createTextNode(host);
+	hostdiv.appendChild(hosttext);
+	holder.appendChild(hostdiv);
+}
+
+function updateCounter() {
+	var counter = document.getElementById("counter");
+	var totalNum = document.getElementById("health").childElementCount;
+	counter.innerHTML = totalNum;
 }

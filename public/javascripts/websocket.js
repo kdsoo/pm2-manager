@@ -24,6 +24,7 @@ socket.on("heartbeat", function(data) {
 		console.log(json);
 		if (json.type == "hb-res") {
 			showHost(json.host);
+			updateCounter();
 		}
 	}
 });
