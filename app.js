@@ -4,6 +4,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var io = require('socket.io');
+
+var localevents = require('./services/localEvent');
+var mqtt = require('./services/mqtt-client');
+var hb = require('./services/heartbeat');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -11,6 +16,7 @@ var users = require('./routes/users');
 var pm2service = require('./services/pm2');
 
 var app = express();
+app.io = io();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,6 +63,33 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+app.io.on('connection', function(socket) {
+	/*
+	 * 	var address = socket.handshake.address;
+	 * 		var idx = address.lastIndexOf(':');
+	 * 			if (~idx && ~address.indexOf('.'))
+	 * 					  address = address.slice(idx + 1);
+	 * 					  */
+	var socketId = socket.id;
+	var clientIp = socket.request.connection.remoteAddress;
+	console.log(socket.handshake.address + " connected");
+	console.log(socket.id + "," + clientIp + " connected");
+
+	socket.on('disconnecting', function() {
+		console.log("disconnecting");
+	});
+	socket.on('disconnect', function() {
+		console.log("disconnected");
+	});
+});
+
+serviceEvent.on("ping", function(msg) {
+	if (!msg.res && msg.cmd) {
+		app.io.sockets.emit("heartbeat", JSON.stringify(msg));
+	}
+});
+
 
 
 module.exports = app;

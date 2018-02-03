@@ -17,7 +17,7 @@ pm2.connect(function() {
 		console.log('[PM2] Log streaming started');
 		getPushDevices(function(err, ret) {
 			console.log("Get clients to be notified done");
-			pm2InitNotify();
+			//pm2InitNotify(); // FIXME
 		});
 
 		bus.on("process:event", function(packet) {
@@ -123,3 +123,14 @@ pusher.devices(function(error, response) {
 	//console.log(response);
 });
 pusher.me(function(err, response) {console.log(response);});
+
+serviceEvent.on('pm2', function(msg) {
+	if (!msg.res && msg.cmd) {
+		var res = msg;
+		switch (msg.cmd) {
+			default:
+				break;
+		}
+	}
+});
+

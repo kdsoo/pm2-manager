@@ -17,6 +17,8 @@
 		"pushbullet": "*",
 		"config": "*",
 		"read-last-lines": "*",
-		"request": "*"
+		"request": "*",
+		"mqtt": "*",
+		"socket.io": "*"
 	}
 }
