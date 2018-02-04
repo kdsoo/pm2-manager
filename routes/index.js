@@ -22,18 +22,25 @@ router.post('/status', function(req, res, next) {
 });
 
 var aliveHosts = 0;
+var aliveHostArr = [];
 serviceEvent.on("ping", function(msg) {
 	if (!msg.res && msg.cmd && msg.type == "hb-res") {
 		++aliveHosts;
+		aliveHostArr.push(msg);
 	}
 });
 
 router.get('/status', function(req, res, next) {
 	aliveHosts = 0;
+	aliveHostArr = [];
+	var result = {};
 	emitServiceEvent("ping", {cmd: "ping", type: "hb-req"}, false, function(ret) {
 		console.log("status post request");
 		setTimeout(function() {
-			res.json({alive: aliveHosts});
+			//res.json({alive: aliveHosts});
+			result.total = aliveHosts;
+			result.hosts = aliveHostArr;
+			res.json(result);
 		}, 3000);
 	});
 });
