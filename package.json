@@ -19,6 +19,7 @@
 		"read-last-lines": "*",
 		"request": "*",
 		"mqtt": "*",
-		"socket.io": "*"
+		"socket.io": "*",
+		"readline": "*"
 	}
 }

@@ -6,12 +6,15 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var io = require('socket.io');
 
+var platform = require('./helper/platform');
 var localevents = require('./services/localEvent');
+var messaging = require('./services/messaging');
 var mqtt = require('./services/mqtt-client');
 var hb = require('./services/heartbeat');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var sys = require('./routes/platform');
 
 var pm2service = require('./services/pm2');
 
@@ -32,6 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/system', sys);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
