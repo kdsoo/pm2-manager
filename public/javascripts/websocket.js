@@ -23,7 +23,13 @@ socket.on("heartbeat", function(data) {
 		var json = JSON.parse(data);
 		console.log(json);
 		if (json.type == "hb-res") {
-			showHost(json.host);
+			var hostinfo = "";
+			if (json.version) {
+				hostinfo = json.host + " (version: " + json.version.service + ")";
+			} else {
+				hostinfo = json.host;
+			}
+			showHost(hostinfo);
 			updateCounter();
 		}
 	}

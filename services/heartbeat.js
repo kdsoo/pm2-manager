@@ -1,5 +1,6 @@
 var config = require('config');
 var os = require('os');
+var platform = require('../helper/platform');
 
 serviceEvent.on('ping', function(msg) {
 	// Service ping
@@ -32,15 +33,18 @@ serviceEvent.on('pm2', function(msg) {
 					emitServiceEvent("ping", msg, false, function(ret) {
 					});
 				} else if (msg.type == "hb-req") {
-					var message = {};
-					message.cmd = "send";
-					var payload = {};
-					payload.cmd = "ping";
-					payload.host = os.hostname();
-					payload.type = "hb-res";
-					payload.requestID = msg.requestID;
-					message.payload = payload;
-					emitServiceEvent("mqtt", message, false, function(ret) {
+					platform.getVersion(function(ver) {
+						var message = {};
+						message.cmd = "send";
+						var payload = {};
+						payload.cmd = "ping";
+						payload.host = os.hostname();
+						payload.type = "hb-res";
+						payload.requestID = msg.requestID;
+						payload.version = ver;
+						message.payload = payload;
+						emitServiceEvent("mqtt", message, false, function(ret) {
+						});
 					});
 				}
 				break;
