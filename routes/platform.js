@@ -41,4 +41,11 @@ router.get('/upgrade', function(req, res, next) {
 	});
 });
 
+router.get('/upgrade/all', function(req, res, next) {
+	var msg = {cmd: "send", payload: {cmd: "upgrade", target: "all", claim: os.hostname()}};
+	emitServiceEvent("mqtt", msg, false, function(ret) {
+		res.send("SeaHaven pm2 manager service upgrade triggered");
+	});
+});
+
 module.exports = router;
