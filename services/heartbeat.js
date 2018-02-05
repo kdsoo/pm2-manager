@@ -1,5 +1,6 @@
 var config = require('config');
 var os = require('os');
+var ip = require('ip');
 var platform = require('../helper/platform');
 
 serviceEvent.on('ping', function(msg) {
@@ -10,6 +11,7 @@ serviceEvent.on('ping', function(msg) {
 			case "ping":
 				if (msg.type == "hb-req") {
 					msg.host = os.hostname();
+					msg.addr = ip.address();
 					var message = {};
 					message.cmd = "send";
 					message.payload = msg;
@@ -39,6 +41,7 @@ serviceEvent.on('pm2', function(msg) {
 						var payload = {};
 						payload.cmd = "ping";
 						payload.host = os.hostname();
+						payload.addr = ip.address();
 						payload.type = "hb-res";
 						payload.requestID = msg.requestID;
 						payload.version = ver;

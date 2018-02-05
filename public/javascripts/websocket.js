@@ -18,19 +18,14 @@ socket.on("connect", function() {
 
 // {"exchange":"upbit","coin":"QTUM","price":89200,"interval":30}
 socket.on("heartbeat", function(data) {
-	console.log(data);
 	if (data) {
 		var json = JSON.parse(data);
-		console.log(json);
 		if (json.type == "hb-res") {
-			var hostinfo = "";
-			if (json.version) {
-				hostinfo = json.host + " (version: " + json.version.service + ")";
-			} else {
-				hostinfo = json.host;
-			}
-			showHost(hostinfo);
+			var id = json.host + "-" + json.addr;
+			if (!document.getElementById("holder-"+id))
+				showHost(json.host, json.addr, json.version.service);
 			updateCounter();
+			refreshTimer(id);
 		}
 	}
 });

@@ -1,15 +1,20 @@
 doctype html
 html
   head
+    meta( name='viewport', content='width=device-width, initial-scale=1' )
     title= title
     script(type='text/javascript', src='/javascripts/jquery.min.js')
+    script(type='text/javascript', src='/javascripts/bootstrap.min.js')
     script(type='text/javascript', src='/javascripts/app.js')
     script(type='text/javascript', src='/javascripts/socket.io.js')
     script(type='text/javascript', src='/javascripts/websocket.js')
+    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
   body
     block content
-      #stats(style="background-color: lightgreen;")
-        #label Alive service hosts
-        #counter
-      #health
+      #container.container
+        #stats.row(style="background-color: lightgreen;")
+          #label Alive service hosts:
+          #counter
+        #header
+        #health
 

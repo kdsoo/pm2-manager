@@ -20,6 +20,7 @@
 		"request": "*",
 		"mqtt": "*",
 		"socket.io": "*",
-		"readline": "*"
+		"readline": "*",
+		"ip": "*"
 	}
 }
