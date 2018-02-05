@@ -1,0 +1,19 @@
+{
+	"service": {
+		"servicePort": 2000
+	},
+	"mqtt": {
+		"server": SERVER_ADDRESS,
+		"channel": "seahaven/servicemanager"
+	},
+	"messaging": {
+		"pushbullet": {
+			"apikey": GET_KEY_FROM_PUSHBULLET_WITH_YOUR_CREDENTIAL
+		},
+		"telegram": {
+			"name": TELEGRAM_NAME,
+			"apikey": GET_FROM_TELEGRAM_DEV_CENTRE,
+			"admin": TELEGRAM_ID_TO_RECEIVE_NOTI(ex: 12314124)
+		}
+	}
+}
