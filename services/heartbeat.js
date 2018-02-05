@@ -42,6 +42,7 @@ serviceEvent.on('pm2', function(msg) {
 						payload.cmd = "ping";
 						payload.host = os.hostname();
 						payload.addr = ip.address();
+						payload.uptime = platform.serviceUptimeSync();
 						payload.type = "hb-res";
 						payload.requestID = msg.requestID;
 						payload.version = ver;

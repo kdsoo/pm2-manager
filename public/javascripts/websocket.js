@@ -26,6 +26,7 @@ socket.on("heartbeat", function(data) {
 				showHost(json.host, json.addr, json.version.service);
 			updateCounter();
 			refreshTimer(id);
+			setHostUptime(id, json.uptime);
 		}
 	}
 });
