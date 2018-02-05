@@ -46,6 +46,19 @@ pm2.connect(function() {
 			*/
 		});
 	});
+
+	// backup pm2 process list to ~/.pm2/dump.pm2 periodically
+	setInterval(function() {
+		pm2.dump(function(err, ret) {
+			if (err) {
+				console.error("pm2 dump error");
+				console.error(err);
+			} else {
+				console.log("pm2 dump succeed");
+				console.log(ret);
+			}
+		});
+	}, 1 * 60 * 60 * 1000);	// 1 hour for default
 });
 
 function pushMsg(packet, cb) {
