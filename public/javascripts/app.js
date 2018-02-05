@@ -12,21 +12,25 @@ $(document).ready(function () {
 		var name = document.createElement("div");
 		var addr = document.createElement("div");
 		var ver = document.createElement("div");
+		var timestamp = document.createElement("div");
 		var uptime = document.createElement("div");
 		alive.className = "col-xs-1 col-sm-1 col-lg-1";
 		alive.innerHTML = "alive";
-		name.className = "col-xs-5 col-sm-5 col-lg-5";
+		name.className = "col-xs-4 col-sm-4 col-lg-4";
 		name.innerHTML = "hostname";
 		addr.className = "col-xs-2 col-sm-2 col-lg-2";
 		addr.innerHTML = "adderss";
-		ver.className = "col-xs-2 col-sm-2 col-lg-2";
+		ver.className = "col-xs-1 col-sm-1 col-lg-1";
 		ver.innerHTML = "version";
-		uptime.className = "col-xs-2 col-sm-2 col-lg-2";
+		timestamp.className = "col-xs-3 col-sm-3 col-lg-3";
+		timestamp.innerHTML = "released";
+		uptime.className = "col-xs-1 col-sm-1 col-lg-1";
 		uptime.innerHTML = "uptime";
 		header.appendChild(alive);
 		header.appendChild(name);
 		header.appendChild(addr);
 		header.appendChild(ver);
+		header.appendChild(timestamp);
 		header.appendChild(uptime);
 	});
 });
@@ -90,7 +94,7 @@ function setHostUptime(id, uptime) {
 	if (ut) ut.innerHTML = uptime;
 }
 
-function showHost(host, address, version) {
+function showHost(host, address, version, timestamp) {
 	var id = host + "-" + address;
 	var holder = document.getElementById("health");
 
@@ -101,27 +105,32 @@ function showHost(host, address, version) {
 	var name = document.createElement("div");
 	var addr = document.createElement("div");
 	var ver = document.createElement("div");
+	var time = document.createElement("div");
 	var uptime = document.createElement("div");
 	alive.id = "indicator-" + id;
 	alive.className = "col-xs-1 col-sm-1 col-lg-1";
-	name.className = "col-xs-5 col-sm-5 col-lg-5";
+	name.className = "col-xs-4 col-sm-4 col-lg-4";
 	addr.className = "col-xs-2 col-sm-2 col-lg-2";
-	ver.className = "col-xs-2 col-sm-2 col-lg-2";
+	ver.className = "col-xs-1 col-sm-1 col-lg-1";
+	time.className = "col-xs-3 col-sm-3 col-lg-3";
 	uptime.id = "uptime-" + id;
-	uptime.className = "col-xs-2 col-sm-2 col-lg-2";
+	uptime.className = "col-xs-1 col-sm-1 col-lg-1";
 
 	hostdiv.appendChild(alive);
 	hostdiv.appendChild(name);
 	hostdiv.appendChild(addr);
 	hostdiv.appendChild(ver);
+	hostdiv.appendChild(time);;
 	hostdiv.appendChild(uptime);
 
 	var nametext = document.createTextNode(host);
 	var addrtext = document.createTextNode(address);
 	var vertext = document.createTextNode(version);
+	var timetext = document.createTextNode(timestamp);
 	name.appendChild(nametext);
 	addr.appendChild(addrtext);
 	ver.appendChild(vertext);
+	time.appendChild(timetext);
 	holder.appendChild(hostdiv);
 }
 
