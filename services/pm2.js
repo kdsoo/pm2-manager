@@ -2,6 +2,7 @@ var os = require('os');
 var config = require('config');
 var request = require('request');
 var pm2 = require('pm2');
+var rl = require('read-last-lines');
 var messaging = require('./messaging');
 
 var appLogHash = {};	// { pm_id: {id: pm_id, name: name, err_log: pm2_env.pm_err_log_path, out_log: pm_out_log_path}}
