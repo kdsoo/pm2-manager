@@ -19,12 +19,11 @@ socket.on("connect", function() {
 // {"exchange":"upbit","coin":"QTUM","price":89200,"interval":30}
 socket.on("heartbeat", function(data) {
 	if (data) {
-		console.log(data);
 		var json = JSON.parse(data);
 		if (json.type == "hb-res") {
-			var id = json.host + "-" + json.addr;
+			var id = json.uuid;
 			if (!document.getElementById("holder-"+id))
-				showHost(json.host, json.addr, json.version.service, json.version.timestamp);
+				showHost(json.uuid, json.host, json.addr, json.version.service, json.version.timestamp);
 			updateCounter();
 			refreshTimer(id);
 			setHostUptime(id, json.uptime);

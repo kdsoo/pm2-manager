@@ -68,6 +68,8 @@ app.use(function(err, req, res, next) {
   });
 });
 
+emitServiceEvent("ping", {cmd: "start"}, false, function(ret) {});
+
 app.io.on('connection', function(socket) {
 	/*
 	 * 	var address = socket.handshake.address;

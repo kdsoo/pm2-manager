@@ -50,16 +50,14 @@ function initTimer(id) {
 	}
 	pingTimer[id] = setTimeout(function() {
 		setHostDead(id);
-		clearTimeout(pingTimer[id]);
-		delete pingTimer[id];
+		rmTimer(id);
 	}, interval);
 }
 
 function refreshTimer(id) {
 	setHostAlive(id);
 	if (pingTimer[id]) {
-		clearTimeout(pingTimer[id]);
-		delete pingTimer[id];
+		rmTimer(id);
 	}
 	pingTimer[id] = setTimeout(function() {
 		setHostDead(id);
@@ -94,8 +92,8 @@ function setHostUptime(id, uptime) {
 	if (ut) ut.innerHTML = uptime;
 }
 
-function showHost(host, address, version, timestamp) {
-	var id = host + "-" + address;
+function showHost(uuid, host, address, version, timestamp) {
+	var id = uuid;
 	var holder = document.getElementById("health");
 
 	var hostdiv = document.createElement("div");
