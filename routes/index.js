@@ -23,10 +23,23 @@ router.post('/status', function(req, res, next) {
 
 var aliveHosts = 0;
 var aliveHostArr = [];
+var aliveTimer = null;
+
+function refreshAliveHosts(msg) {
+	clearTimeout(aliveTimer);
+	++aliveHosts;
+	aliveHostArr.push(msg);
+	aliveTimer = setTimeout(function() {
+		aliveHosts = 0;
+		aliveHostArr = [];
+		aliveTimer = null;
+		console.log("alive host cache flushed");
+	}, 5 * 1000);
+}
+
 serviceEvent.on("ping", function(msg) {
 	if (!msg.res && msg.cmd && msg.type == "hb-res") {
-		++aliveHosts;
-		aliveHostArr.push(msg);
+		refreshAliveHosts(msg);
 	}
 });
 
