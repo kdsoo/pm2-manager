@@ -14,9 +14,10 @@ $(document).ready(function () {
 		var ver = document.createElement("div");
 		var timestamp = document.createElement("div");
 		var uptime = document.createElement("div");
+		var services = document.createElement("div");
 		alive.className = "col-xs-1 col-sm-1 col-lg-1";
 		alive.innerHTML = "alive";
-		name.className = "col-xs-4 col-sm-4 col-lg-4";
+		name.className = "col-xs-3 col-sm-3 col-lg-3";
 		name.innerHTML = "hostname";
 		addr.className = "col-xs-2 col-sm-2 col-lg-2";
 		addr.innerHTML = "adderss";
@@ -26,12 +27,15 @@ $(document).ready(function () {
 		timestamp.innerHTML = "released";
 		uptime.className = "col-xs-1 col-sm-1 col-lg-1";
 		uptime.innerHTML = "uptime";
+		services.className = "col-xs-1 col-sm-1 col-lg-1";
+		services.innerHTML = "services";
 		header.appendChild(alive);
 		header.appendChild(name);
 		header.appendChild(addr);
 		header.appendChild(ver);
 		header.appendChild(timestamp);
 		header.appendChild(uptime);
+		header.appendChild(services);
 	});
 });
 
@@ -92,7 +96,7 @@ function setHostUptime(id, uptime) {
 	if (ut) ut.innerHTML = uptime;
 }
 
-function showHost(uuid, host, address, version, timestamp) {
+function showHost(uuid, host, address, version, timestamp, num) {
 	var id = uuid;
 	var holder = document.getElementById("health");
 
@@ -105,14 +109,16 @@ function showHost(uuid, host, address, version, timestamp) {
 	var ver = document.createElement("div");
 	var time = document.createElement("div");
 	var uptime = document.createElement("div");
+	var services = document.createElement("div");
 	alive.id = "indicator-" + id;
 	alive.className = "col-xs-1 col-sm-1 col-lg-1";
-	name.className = "col-xs-4 col-sm-4 col-lg-4";
+	name.className = "col-xs-3 col-sm-3 col-lg-3";
 	addr.className = "col-xs-2 col-sm-2 col-lg-2";
 	ver.className = "col-xs-1 col-sm-1 col-lg-1";
 	time.className = "col-xs-3 col-sm-3 col-lg-3";
 	uptime.id = "uptime-" + id;
 	uptime.className = "col-xs-1 col-sm-1 col-lg-1";
+	services.className = "col-xs-1 col-sm-1 col-lg-1";
 
 	hostdiv.appendChild(alive);
 	hostdiv.appendChild(name);
@@ -120,15 +126,18 @@ function showHost(uuid, host, address, version, timestamp) {
 	hostdiv.appendChild(ver);
 	hostdiv.appendChild(time);;
 	hostdiv.appendChild(uptime);
+	hostdiv.appendChild(services);
 
 	var nametext = document.createTextNode(host);
 	var addrtext = document.createTextNode(address);
 	var vertext = document.createTextNode(version);
 	var timetext = document.createTextNode(timestamp);
+	var servicestext = document.createTextNode(num);
 	name.appendChild(nametext);
 	addr.appendChild(addrtext);
 	ver.appendChild(vertext);
 	time.appendChild(timetext);
+	services.appendChild(servicestext);
 	holder.appendChild(hostdiv);
 }
 

@@ -23,7 +23,7 @@ socket.on("heartbeat", function(data) {
 		if (json.type == "hb-res") {
 			var id = json.uuid;
 			if (!document.getElementById("holder-"+id))
-				showHost(json.uuid, json.host, json.addr, json.version.service, json.version.timestamp);
+				showHost(json.uuid, json.host, json.addr, json.version.service, json.version.timestamp, json.services);
 			updateCounter();
 			refreshTimer(id);
 			setHostUptime(id, json.uptime);

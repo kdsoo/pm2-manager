@@ -24,16 +24,6 @@ pm2.connect(function() {
 			}
 		});
 
-		/*
-		//bus.on("log:err", function(packet) {
-		bus.on("log:out", function(packet) {
-			//console.log("error on: " + packet.process.name);
-			//console.log("pm2 packet data: " + packet.data);
-			//console.log("pm2 packet: " + JSON.stringify(packet));
-			//console.log("app id: " + packet.process.pm_id);
-			console.log(packet);
-		});
-		*/
 	});
 
 	pm2.list(function(err, list) {
@@ -41,10 +31,10 @@ pm2.connect(function() {
 			//console.log(app.pid + ", " + app.name);
 			appLogHash[app.pm_id] = {id: app.pm_id, name: app.name, out_log: app.pm2_env.pm_out_log_path, err_log: app.pm2_env.pm_err_log_path};
 			/*
-			pm2.describe(app.pm_id, function(err, desc) {
-				console.log(desc);
-			});
-			*/
+				 pm2.describe(app.pm_id, function(err, desc) {
+				 console.log(desc);
+				 });
+				 */
 		});
 	});
 
@@ -60,6 +50,32 @@ pm2.connect(function() {
 			}
 		});
 	}, 1 * 60 * 60 * 1000);	// 1 hour for default
+
+	serviceEvent.on('pm2', function(msg) {
+		try {
+			msg = JSON.parse(msg);
+		} catch(e) {
+			console.error(e);
+		}
+		if (!msg.res && msg.cmd) {
+			var res = msg;
+			switch (msg.cmd) {
+				case "list":
+					pm2.list(function(err, list) {
+						if (err) {
+							consnole.error(err);
+							res.res = err;
+						} else {
+							res.res = list;
+						}
+						serviceEvent.emit("pm2-" + msg.requestID, msg);
+					});
+					break;
+				default:
+					break;
+			}
+		}
+	});
 });
 
 function pushMsg(packet, cb) {
@@ -106,14 +122,4 @@ function pm2InitNotify() {
 	messaging.sendTelegram(title, function(err, res, body) {
 	});
 }
-
-serviceEvent.on('pm2', function(msg) {
-	if (!msg.res && msg.cmd) {
-		var res = msg;
-		switch (msg.cmd) {
-			default:
-				break;
-		}
-	}
-});
 

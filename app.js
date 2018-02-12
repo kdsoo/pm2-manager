@@ -97,7 +97,11 @@ serviceEvent.on("ping", function(msg) {
 });
 
 serviceEvent.on('pm2', function(msg) {
-	msg = JSON.parse(msg);
+	try {
+		msg = JSON.parse(msg);
+	} catch(e) {
+		console.error(e);
+	}
 	if (!msg.res && msg.cmd) {
 		switch (msg.cmd) {
 			case "upgrade":

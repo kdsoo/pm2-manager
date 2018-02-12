@@ -116,7 +116,11 @@ serviceEvent.on('ping', function(msg) {
 });
 
 serviceEvent.on('pm2', function(msg) {
-	msg = JSON.parse(msg);
+	try {
+		msg = JSON.parse(msg);
+	} catch(e) {
+		console.error(e);
+	}
 	// Service ping
 	if (!msg.res && msg.cmd) {
 		switch (msg.cmd) {
@@ -125,21 +129,25 @@ serviceEvent.on('pm2', function(msg) {
 					emitServiceEvent("ping", msg, false, function(ret) {});
 					refreshTimer(msg);
 				} else if (msg.type == "hb-req") {
-					platform.getVersion(function(ver) {
-						var message = {};
-						message.cmd = "send";
-						var payload = {};
-						payload.cmd = "ping";
-						payload.uuid = getHostUUID(os.hostname(), getMacAddr(ip.address()));
-						payload.host = os.hostname();
-						payload.addr = ip.address();
-						payload.mac = getMacAddr(ip.address());
-						payload.uptime = platform.serviceUptimeSync();
-						payload.type = "hb-res";
-						payload.requestID = msg.requestID;
-						payload.version = ver;
-						message.payload = payload;
-						emitServiceEvent("mqtt", message, false, function(ret) {});
+					emitServiceEvent("pm2", {cmd: "list"}, true, function(ret) {
+						var num = ret.res.length;
+						platform.getVersion(function(ver) {
+							var message = {};
+							message.cmd = "send";
+							var payload = {};
+							payload.cmd = "ping";
+							payload.uuid = getHostUUID(os.hostname(), getMacAddr(ip.address()));
+							payload.host = os.hostname();
+							payload.services = num;
+							payload.addr = ip.address();
+							payload.mac = getMacAddr(ip.address());
+							payload.uptime = platform.serviceUptimeSync();
+							payload.type = "hb-res";
+							payload.requestID = msg.requestID;
+							payload.version = ver;
+							message.payload = payload;
+							emitServiceEvent("mqtt", message, false, function(ret) {});
+						});
 					});
 				}
 				break;

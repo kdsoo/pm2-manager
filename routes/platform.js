@@ -48,4 +48,16 @@ router.get('/upgrade/all', function(req, res, next) {
 	});
 });
 
+router.get('/service/list', function(req, res, next) {
+	var command = {cmd: "list"};
+	emitServiceEvent("pm2", command, true, function(ret) {
+		var arr = ret.res;
+		var list = {total: arr.length, services: []};
+		for (var i = 0; i < arr.length; i++) {
+			list.services.push({pm_id: arr[i].pm_id, name: arr[i].name});
+		}
+		res.json(list);
+	});
+});
+
 module.exports = router;
