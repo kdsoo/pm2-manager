@@ -53,27 +53,27 @@ pm2.connect(function() {
 
 	serviceEvent.on('pm2', function(msg) {
 		try {
-			msg = JSON.parse(msg);
+			if (typeof(msg) == "string") msg = JSON.parse(msg);
+			if (!msg.res && msg.cmd) {
+				var res = msg;
+				switch (msg.cmd) {
+					case "list":
+						pm2.list(function(err, list) {
+							if (err) {
+								consnole.error(err);
+								res.res = err;
+							} else {
+								res.res = list;
+							}
+							serviceEvent.emit("pm2-" + msg.requestID, msg);
+						});
+						break;
+					default:
+						break;
+				}
+			}
 		} catch(e) {
 			console.error(e);
-		}
-		if (!msg.res && msg.cmd) {
-			var res = msg;
-			switch (msg.cmd) {
-				case "list":
-					pm2.list(function(err, list) {
-						if (err) {
-							consnole.error(err);
-							res.res = err;
-						} else {
-							res.res = list;
-						}
-						serviceEvent.emit("pm2-" + msg.requestID, msg);
-					});
-					break;
-				default:
-					break;
-			}
 		}
 	});
 });

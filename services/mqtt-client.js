@@ -19,7 +19,7 @@ client.on('message', function (topic, message) {
 	// message is Buffer
 	switch (topic) {
 		case pm2Channel:
-			emitServiceEvent("pm2", message, false, function(ret) {});
+			emitServiceEvent("pm2", message.toString(), false, function(ret) {});
 			break;
 		default:
 			console.log(topic + ' case is not supported');
