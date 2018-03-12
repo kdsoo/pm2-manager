@@ -66,12 +66,15 @@ function refreshTimer(msg) {
 	var hostname = msg.host;
 	var report = "host " + hostname + " is down";
 	if (HBhostTimer[id]) {
-		rmTimer(msg);;
+		rmTimer(msg);
 	}
 	HBhostTimer[id] = setTimeout(function() {
-		// alert dead host
-		messaging.pushToAll(report, report);
-		delete HBhostTimer[id];
+		// double check for temporal network troubles
+		HBhostTimer[id] = setTimeout(function() {
+			// alert dead host
+			messaging.pushToAll(report, report);
+			delete HBhostTimer[id];
+		}, HBhostInterval);
 	}, HBhostInterval);
 }
 
