@@ -22,6 +22,7 @@
 		"socket.io": "*",
 		"readline": "*",
 		"ip": "*",
-		"uuid-1345": "*"
+		"uuid-1345": "*",
+		"node-zookeeper-client": "*"
 	}
 }
