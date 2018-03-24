@@ -3,24 +3,18 @@ var config = require('config');
 var request = require('request');
 var pm2 = require('pm2');
 var rl = require('read-last-lines');
-var messaging = require('./messaging');
 
 var appLogHash = {};	// { pm_id: {id: pm_id, name: name, err_log: pm2_env.pm_err_log_path, out_log: pm_out_log_path}}
 
 pm2.connect(function() {
 	pm2.launchBus(function(err, bus) {
 		console.log('[PM2] Log streaming started');
-		messaging.getPushDevices(function(err, ret) {
-			console.log("Get clients to be notified done");
-			pm2InitNotify();
-		});
+		pm2InitNotify();
 
 		bus.on("process:event", function(packet) {
 			console.log(packet.process.pm_id + ": " + packet.process.name + ": " + packet.event);
 			if (packet.event == "online") {
-				pushMsg(packet, function(err, ret) {
-					console.log(ret);
-				});
+				pushMsg(packet);
 			}
 		});
 
@@ -78,7 +72,7 @@ pm2.connect(function() {
 	});
 });
 
-function pushMsg(packet, cb) {
+function pushMsg(packet) {
 	var host = os.hostname();
 	var appid = packet.process.pm_id;
 	var appname = packet.process.name;
@@ -90,18 +84,11 @@ function pushMsg(packet, cb) {
 		var message = appname + "(" + appid + "): " + event + " \n" + log;
 		console.log("push message: " + message);
 		// pushbullet
-		messaging.sendPushbullet("", title, message, function(error, response) {
-			if (error) {
-				console.error('error: ' + error);
-				cb(error, null);
-			} else {
-				console.log('res: ' + JSON.stringify(response));
-				cb(null, response);
-			}
-		});
+		var pushbulletMsg = {cmd:"PUSH", payload: {target: "PUSHBULLET", title: title, msg: message}};
+		emitServiceEvent("messaging",  pushbulletMsg, false, function(ret) {});
 		// Telegram
-		messaging.sendTelegram(title, function(err, res, body) {
-		});
+		var telegramMsg = {cmd:"PUSH", payload: {target: "TELEGRAM", title: title, msg: message}};
+		emitServiceEvent("messaging",  telegramMsg, false, function(ret) {});
 	});
 }
 
@@ -111,15 +98,11 @@ function pm2InitNotify() {
 	var message = title;
 	console.log("push message: " + message);
 
-	messaging.sendPushbullet("", title, message, function(error, response) {
-		if (error) {
-			console.error('error: ' + error);
-		} else {
-			console.log('res: ' + JSON.stringify(response));
-		}
-	});
+	// pushbullet
+	var pushbulletMsg = {cmd:"PUSH", payload: {target: "PUSHBULLET", title: title, msg: message}};
+	emitServiceEvent("messaging",  pushbulletMsg, false, function(ret) {});
 	// Telegram
-	messaging.sendTelegram(title, function(err, res, body) {
-	});
+	var telegramMsg = {cmd:"PUSH", payload: {target: "TELEGRAM", title: title, msg: message}};
+	emitServiceEvent("messaging",  telegramMsg, false, function(ret) {});
 }
 

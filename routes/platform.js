@@ -20,7 +20,10 @@ router.get('/upgrade', function(req, res, next) {
 		if (err) {
 			// Error occured upgrading service. notify user
 			console.error("pm2 manager upgrade error " + err);
-			messaging.pushToAll("pm2 manager upgrade error on " + os.hostname(), err);
+			var title = "pm2 manager upgrade error on " + os.hostname();
+			var Msg = {cmd:"PUSH", payload: {target: "ALL", title: title, msg: err}};
+			emitServiceEvent("messaging",  Msg, false, function(ret) {});
+
 			res.status(503);
 			res.send(err);
 		} else {
@@ -30,7 +33,9 @@ router.get('/upgrade', function(req, res, next) {
 				platform.npmInstall(function(err, ret) {
 					if (err) {
 						console.error("pm2 manager npm install error " + err);
-						messaging.pushToAll("pm2 manager npm install error on " + os.hostname(), err);
+						var title = "pm2 manager npm install error on " + os.hostname();
+						var Msg = {cmd:"PUSH", payload: {target: "ALL", title: title, msg: err}};
+						emitServiceEvent("messaging",  Msg, false, function(ret) {});
 					}
 					console.log("pm2 manager upgrade & npm install done");
 					process.exit();

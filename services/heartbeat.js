@@ -72,7 +72,8 @@ function refreshTimer(msg) {
 		// double check for temporal network troubles
 		HBhostTimer[id] = setTimeout(function() {
 			// alert dead host
-			messaging.pushToAll(report, report);
+			var Msg = {cmd:"PUSH", payload: {target: "ALL", title: report, msg: report}};
+			emitServiceEvent("messaging",  Msg, false, function(ret) {});
 			delete HBhostTimer[id];
 		}, HBhostInterval);
 	}, HBhostInterval);

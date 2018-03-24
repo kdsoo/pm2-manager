@@ -9,6 +9,16 @@ var telegram_apikey = config.get("messaging.telegram.apikey");
 var telegram_admin = config.get("messaging.telegram.admin");
 var allDevices = '';
 
+// init pushbullet
+getPushDevices(function(e,r) {
+	if(e) {
+		console.error(e);
+	} else {
+		console.log(r);
+		console.log("Pushbullet initialized");
+	}
+});
+
 function getPushDevices(cb) {
 	pusher.devices(function(error, response) {
 		if (error) {
@@ -57,3 +67,35 @@ function pushToAll(title, msg) {
 	});
 }
 module.exports.pushToAll = pushToAll;
+
+serviceEvent.on('messaging', function(msg) {
+	try {
+		if (typeof(msg) == "string") msg = JSON.parse(msg);
+
+		if (!msg.res && msg.cmd) {
+			switch (msg.cmd) {
+				case "PUSH":
+					// msg.payload.target, msg.payload.title, msg.payload.msg
+					switch(msg.payload.target) {
+						case "ALL":
+							pushToAll(msg.payload.title, msg.payload.msg);
+							break;
+						case "TELEGRAM":
+							sendTelegram(msg.payload.title, msg.payload.msg, function(e,r,b) {});
+							break;
+						case "PUSHBULLET":
+							sendPushbullet("", msg.payload.title, msg.payload.msg, function(e,r) {});
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	} catch(e) {
+		console.error(e);
+	}
+});
+
