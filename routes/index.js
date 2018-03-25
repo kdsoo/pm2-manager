@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var zk = require('../services/zookeeper');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -56,6 +57,27 @@ router.get('/status', function(req, res, next) {
 			res.json(result);
 		}, 3000);
 	});
+});
+
+router.get('/cluster/list', function(req, res, next) {
+	var node = req.query.node;
+	zk.getPaths(node, function(e, r) {
+		if (e) {
+		} else {
+			res.json(r);
+		}
+	});
+});
+
+router.get('/cluster/node', function(req, res, next) {
+	var node = req.query.node;
+	var data = zk.getNode(node);
+	if (!data) {
+		res.status(404);
+		res.send(node + " not found");
+	} else {
+		res.json(zk.getNode(node));
+	}
 });
 
 module.exports = router;
