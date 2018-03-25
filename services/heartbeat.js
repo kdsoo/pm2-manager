@@ -71,9 +71,13 @@ function refreshTimer(msg) {
 	HBhostTimer[id] = setTimeout(function() {
 		// double check for temporal network troubles
 		HBhostTimer[id] = setTimeout(function() {
-			// alert dead host
-			var Msg = {cmd:"PUSH", payload: {target: "ALL", title: report, msg: report}};
-			emitServiceEvent("messaging",  Msg, false, function(ret) {});
+			if (config.has("messaging.notify")) {
+				if (config.get("messaging.notify") == true) {
+					// alert dead host
+					var Msg = {cmd:"PUSH", payload: {target: "ALL", title: report, msg: report}};
+					emitServiceEvent("messaging",  Msg, false, function(ret) {});
+				}
+			}
 			delete HBhostTimer[id];
 		}, HBhostInterval);
 	}, HBhostInterval);
