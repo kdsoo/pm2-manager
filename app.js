@@ -11,6 +11,8 @@ var localevents = require('./services/localEvent');
 var messaging = require('./services/messaging');
 var mqtt = require('./services/mqtt-client');
 var hb = require('./services/heartbeat');
+var zookeeper = require('./services/zookeeper');
+var cluster = require('./services/clusterManager');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
