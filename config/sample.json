@@ -15,5 +15,30 @@
 			"apikey": GET_FROM_TELEGRAM_DEV_CENTRE,
 			"admin": TELEGRAM_ID_TO_RECEIVE_NOTI(ex: 12314124)
 		}
+	},
+	"zookeeper": {
+		"notify": true,
+		"server": {
+			"addr": "ZOOKEEPER SERVER ADDRESS",
+			"port": 2181
+		},
+		"auth": {
+			"cluster": {
+				"method": "digest",
+				"id": "",
+				"passwd": ""
+			},
+			"test": {
+				"method": "digest",
+				"id": "",
+				"passwd": ""
+			}
+		},
+		"namespace": {
+			"zkroot": "/",
+			"cluster": "/seahaven-pm2",
+			"cluster_hosts": "/seahaven-pm2/hosts"
+		}
 	}
+
 }
