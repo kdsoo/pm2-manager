@@ -39,6 +39,7 @@ function handleClientState(state) {
 	switch(code) {
 		case 0:
 			console.log("DISCONNECTED");
+			setServiceReady(false);
 			setTimeout(function() {
 				console.log("Trying to reconnect");
 				connectClient();
@@ -46,6 +47,7 @@ function handleClientState(state) {
 			break;
 		case 3:
 			console.log("SYNC_CONNECTED");
+			setServiceReady(true);
 			break;
 		case 4:
 			console.log("AUTH_FAILED");
@@ -573,7 +575,7 @@ function broadcastServiceStatus() {
 }
 
 client.on('connected', function () {
-	setServiceReady(true);
+	handleClientState(getClientState(client));
 	broadcastServiceStatus();
 	console.log('Connected to ZooKeeper.');
 	console.log('Current state is: ', getClientState(client).name);
@@ -589,10 +591,11 @@ client.on('connected', function () {
 });
 
 client.on('disconnected', function () {
-	setServiceReady(false);
+	handleClientState(getClientState(client));
 	broadcastServiceStatus();
 	console.log('Disconnected from ZooKeeper.');
 	console.log('Current state is: ', getClientState(client).name);
+	connectClient();
 });
 
 // msg: {cmd:"", payload: {parent: parent, node: node, type: type, data: data}, }
