@@ -11,6 +11,10 @@ router.get('/hosts', function(req, res, next) {
   res.render('ping', { title: 'Service deployment status' });
 });
 
+router.get('/cluster', function(req, res, next) {
+  res.render('cluster', { title: 'Service deployment status' });
+});
+
 // HB protocol pipeline
 // router:Event:ping, type:hb-req => hb:Event:mqtt, type:hb-req => mqtt publish
 // => mqtt listener:Event:pm2, type:hb-res => hb:Event:ping, type:hb-res

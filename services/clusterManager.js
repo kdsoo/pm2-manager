@@ -102,23 +102,27 @@ function prepareClusterNamespace() {
 }
 
 function joinCluster() {
-	platform.getVersion(function(ver) {
-		var data = gen.hostDATA();
-		data.mac = gen.getMacAddr(ip.address());
-		data.uuid = gen.getHostUUID(os.hostname(), gen.getMacAddr(ip.address()));
-		data.registered = new Date();
-		data.version = ver;
+	emitServiceEvent("pm2", {cmd: "list"}, true, function(ret) {
+		var numServices = ret.res.length;
+		platform.getVersion(function(ver) {
+			var data = gen.hostDATA();
+			data.mac = gen.getMacAddr(ip.address());
+			data.uuid = gen.getHostUUID(os.hostname(), gen.getMacAddr(ip.address()));
+			data.registered = new Date();
+			data.version = ver;
+			data.numservices = numServices;
 
-		var serviceMsg = {cmd: "CREATE"
-			, payload: {
-				parent: config.get("zookeeper.namespace.cluster_hosts")
-				, node: gen.hostUUID()
-				, type: "EPHEMERAL"
-				, data: data
-			}
-		};
-		setTimeout(function() {
-			emitServiceEvent("zookeeper", serviceMsg, false, function(ret) {});
-		}, 3000);
+			var serviceMsg = {cmd: "CREATE"
+				, payload: {
+					parent: config.get("zookeeper.namespace.cluster_hosts")
+			, node: gen.hostUUID()
+			, type: "EPHEMERAL"
+			, data: data
+				}
+			};
+			setTimeout(function() {
+				emitServiceEvent("zookeeper", serviceMsg, false, function(ret) {});
+			}, 3000);
+		});
 	});
 }
