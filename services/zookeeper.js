@@ -393,6 +393,7 @@ function getData(client, path) {
 					client.exists(path, function(e, stat) {
 						if (e) {
 							console.error(e);
+							handleClientState(getClientState(client));
 						} else if (stat) {
 							// node refreshed. do not notify
 						} else {
@@ -410,7 +411,8 @@ function getData(client, path) {
 		}
 	}, function (error, data, stat) {
 		if (error) {
-			console.log('Error occurred when getting data: %s.', error);
+			console.error('Error occurred when getting data: %s.', error);
+			handleClientState(getClientState(client));
 			return;
 		}
 		console.log('Node: %s has data: %s, version: %d', path, data ? data.toString() : undefined, stat.version);
@@ -419,6 +421,7 @@ function getData(client, path) {
 		client.getChildren(path, function(err, children, stat) {
 			if (err) {
 				console.error('Failed to list children of %s due to: %s.', path, error);
+				handleClientState(getClientState(client));
 			} else {
 				console.log("Children nodes of ", path, children);
 				for (var i = 0; i < children.length; i++) {
@@ -457,6 +460,7 @@ function scanAllChildren(client, path) {
 	client.getChildren(path, function (error, children, stat) {
 		if (error) {
 			console.error('Failed to list children of %s due to: %s.', path, error);
+			handleClientState(getClientState(client));
 		} else {
 			console.log(path, children);
 			for (var i = 0; i < children.length; i++) {
@@ -474,6 +478,7 @@ function getPaths(node, cb) {
 	client.exists(node, function(err, stat) {
 		if (err) {
 			console.error(err);
+			handleClientState(getClientState(client));
 		} else if (stat) {
 			temp_paths.push(node);
 			scanAllChildren(client, node);
@@ -537,6 +542,7 @@ function watchNodeTree(client, path) {
 	}, function (error, children, stat) {
 		if (error) {
 			console.error('Failed to list children of %s due to: %s.', path, error);
+			handleClientState(getClientState(client));
 		} else {
 			console.log("watch path: ", path);
 			for (var i = 0; i < children.length; i++) {
@@ -622,6 +628,7 @@ serviceEvent.on('zookeeper', function(msg) {
 					createZNODE(client, parent, node, type, data, auth, function(e, r) {
 						if (e) {
 							console.error(e);
+							handleClientState(getClientState(client));
 						} else {
 							console.log(r);
 						}
@@ -641,5 +648,6 @@ serviceEvent.on('zookeeper', function(msg) {
 		}
 	} catch(e) {
 		console.error(e);
+		handleClientState(getClientState(client));
 	}
 });
