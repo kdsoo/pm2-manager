@@ -43,7 +43,7 @@ function handleClientState(state) {
 			setTimeout(function() {
 				console.log("Trying to reconnect");
 				connectClient();
-			}, 1000);
+			}, 10 * 1000);
 			break;
 		case 3:
 			console.log("SYNC_CONNECTED");
@@ -64,7 +64,7 @@ function handleClientState(state) {
 			setTimeout(function() {
 				console.log("Trying to reconnect");
 				connectClient();
-			}, 1000);
+			}, 10 * 1000);
 			break;
 		default:
 			console.log("Unknown client state");
@@ -575,9 +575,15 @@ function isServiceReady() {
 	return ServiceReady;
 }
 
+var StatusNotiTimer = false;
 function broadcastServiceStatus() {
-	var msg = {cmd: "STATUS", payload: {cmd: "notify", status: isServiceReady()}};
-	emitServiceEvent("zookeeper", msg, false, function(ret) {});
+	if (!StatusNotiTimer || isServiceReady()) {
+		var msg = {cmd: "STATUS", payload: {cmd: "notify", status: isServiceReady()}};
+		emitServiceEvent("zookeeper", msg, false, function(ret) {});
+		StatusNotiTimer = setTimeout(function() {
+			StatusNotiTimer = false;
+		}, 5 * 60 * 1000); // 5 min buffer time
+	}
 }
 
 client.on('connected', function () {
@@ -597,11 +603,10 @@ client.on('connected', function () {
 });
 
 client.on('disconnected', function () {
-	handleClientState(getClientState(client));
 	broadcastServiceStatus();
 	console.log('Disconnected from ZooKeeper.');
 	console.log('Current state is: ', getClientState(client).name);
-	connectClient();
+	handleClientState(getClientState(client));
 });
 
 // msg: {cmd:"", payload: {parent: parent, node: node, type: type, data: data}, }

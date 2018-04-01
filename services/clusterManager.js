@@ -55,7 +55,7 @@ serviceEvent.on('zookeeper', function(msg) {
 				case "NOTI":
 					if (msg.payload.event == "NODE_DELETED") {
 						if (config.has("zookeeper.notify")) {
-							var title = getHostname(msg.payload.path) + " host is down";
+							var title = getHostname(msg.payload.path) + " host is down(" + os.hostname() + " reporting)";
 							var Msg = {cmd:"PUSH", payload: {target: "ALL", title: title, msg: title}};
 							emitServiceEvent("messaging",  Msg, false, function(ret) {});
 						}

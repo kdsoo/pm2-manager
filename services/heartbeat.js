@@ -43,7 +43,6 @@ function startHBservice() {
 		HBserviceTimer = setInterval(function() {
 			emitServiceEvent("ping", {cmd: "ping", type: "hb-req"}, false, function(ret) {});
 			console.log("ping");
-			console.log(HBhostTimer);
 		}, HBinterval);
 		console.log("#########################");
 		console.log("HeartBeat service started");
