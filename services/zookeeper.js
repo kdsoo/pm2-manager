@@ -7,7 +7,36 @@ var zkPort = config.get("zookeeper.server.port");
 var clientOptions = {};
 var client = zookeeper.createClient(zkAddr +":"+ zkPort, clientOptions);
 
+function initClient() {
+	client = zookeeper.createClient(zkAddr +":"+ zkPort, clientOptions);
+
+	client.on('connected', function () {
+		handleClientState(getClientState(client));
+		broadcastServiceStatus();
+		console.log('Connected to ZooKeeper.');
+		console.log('Current state is: ', getClientState(client).name);
+
+		zk_paths = [];
+		zk_nodes = [];
+		zk_node_data = {};
+
+		addAuthAllClaim(client);
+
+		watchNodeTree(client, config.get("zookeeper.namespace.zkroot"));
+		watchNodeData(client, config.get("zookeeper.namespace.zkroot"));
+	});
+
+	client.on('disconnected', function () {
+		broadcastServiceStatus();
+		console.log('Disconnected from ZooKeeper.');
+		console.log('Current state is: ', getClientState(client).name);
+		handleClientState(getClientState(client));
+	});
+
+}
+
 function connectClient() {
+	initClient();
 	client.connect();
 }
 
@@ -41,7 +70,7 @@ function handleClientState(state) {
 			console.log("DISCONNECTED");
 			setServiceReady(false);
 			setTimeout(function() {
-				console.log("Trying to reconnect");
+				console.log("Trying to reconnect (DISCONNECTED)");
 				connectClient();
 			}, 10 * 1000);
 			break;
@@ -62,7 +91,7 @@ function handleClientState(state) {
 			console.log("EXPIRED");
 			disconnectClient();
 			setTimeout(function() {
-				console.log("Trying to reconnect");
+				console.log("Trying to reconnect (EXPIRED)");
 				connectClient();
 			}, 10 * 1000);
 			break;
@@ -528,17 +557,17 @@ function watchNodeTree(client, path) {
 				if (e) {
 				console.error(e);
 				} else if (stat) {
-		// node refreshed. do not notify
+				// node refreshed. do not notify
 				} else {
 				notifyZKevent(event, "watchNodeTree");
 				}
 				});
 				}, 3000);
 				*/
-		break;
-		default:
-		break;
-	}
+				break;
+			default:
+				break;
+		}
 	}, function (error, children, stat) {
 		if (error) {
 			console.error('Failed to list children of %s due to: %s.', path, error);
@@ -585,29 +614,6 @@ function broadcastServiceStatus() {
 		}, 5 * 60 * 1000); // 5 min buffer time
 	}
 }
-
-client.on('connected', function () {
-	handleClientState(getClientState(client));
-	broadcastServiceStatus();
-	console.log('Connected to ZooKeeper.');
-	console.log('Current state is: ', getClientState(client).name);
-
-	zk_paths = [];
-	zk_nodes = [];
-	zk_node_data = {};
-
-	addAuthAllClaim(client);
-
-	watchNodeTree(client, config.get("zookeeper.namespace.zkroot"));
-	watchNodeData(client, config.get("zookeeper.namespace.zkroot"));
-});
-
-client.on('disconnected', function () {
-	broadcastServiceStatus();
-	console.log('Disconnected from ZooKeeper.');
-	console.log('Current state is: ', getClientState(client).name);
-	handleClientState(getClientState(client));
-});
 
 // msg: {cmd:"", payload: {parent: parent, node: node, type: type, data: data}, }
 serviceEvent.on('zookeeper', function(msg) {
