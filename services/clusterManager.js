@@ -32,6 +32,7 @@ serviceEvent.on('zookeeper', function(msg) {
 							console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 							console.log("CONNECTED to zookeeper");
 							console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+							initClusterManager();
 						} else if (msg.payload.status == false) {
 							console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 							console.log("DISCONNECTED from zookeeper");
@@ -70,32 +71,35 @@ serviceEvent.on('zookeeper', function(msg) {
 	}
 });
 
-var waitZK = setInterval(function() {
-	var serviceMsg = {cmd: "STATUS", payload: {cmd: "query"}};
-	emitServiceEvent("zookeeper", serviceMsg, true, function(ret) {
-		if (ret.res.status == true) {
-			console.log("Zookeeper ready");
-			clearInterval(waitZK);
-			prepareClusterNamespace();
-			setTimeout(function() {
-				joinCluster();
-			}, 1000);
-		}
-	});
-}, 1000);
+initClusterManager();
+function initClusterManager() {
+	var waitZK = setInterval(function() {
+		var serviceMsg = {cmd: "STATUS", payload: {cmd: "query"}};
+		emitServiceEvent("zookeeper", serviceMsg, true, function(ret) {
+			if (ret.res.status == true) {
+				console.log("Zookeeper ready");
+				clearInterval(waitZK);
+				prepareClusterNamespace();
+				setTimeout(function() {
+					joinCluster();
+				}, 1000);
+			}
+		});
+	}, 1000);
+}
 
 function prepareClusterNamespace() {
 	var serviceMsg = {cmd: "CREATE"
 		, payload: {
 			parent: config.get("zookeeper.namespace.cluster")
-			, node: "hosts"
-			, type: "PERSISTENT"
-			, data: "Cluster hosts registry namespace"
-			, auth: {
-				method: config.get("zookeeper.auth.cluster.method")
-				, id: config.get("zookeeper.auth.cluster.id")
-				, passwd: config.get("zookeeper.auth.cluster.passwd")
-			}
+				, node: "hosts"
+				, type: "PERSISTENT"
+				, data: "Cluster hosts registry namespace"
+				, auth: {
+					method: config.get("zookeeper.auth.cluster.method")
+						, id: config.get("zookeeper.auth.cluster.id")
+						, passwd: config.get("zookeeper.auth.cluster.passwd")
+				}
 		}
 	};
 	emitServiceEvent("zookeeper", serviceMsg, false, function(ret) {});
