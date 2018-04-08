@@ -31,6 +31,7 @@ $(document).ready(function () {
 	header.appendChild(services);
 
 	getCluster(function(cluster) {
+		console.log(cluster);
 		for (var i = 0; i < cluster.length; i++) {
 			getNode(cluster[i], function(host) {
 				showNode(host);
@@ -54,6 +55,7 @@ function getNode(node, cb) {
 }
 
 function showNode(node) {
+	//console.log(node.data.hostname);
 	if (node.data.version) {
 		var holder = document.getElementById("health");
 		var clusterNode = document.createElement("div");

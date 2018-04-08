@@ -452,7 +452,7 @@ function getData(client, path) {
 				console.error('Failed to list children of %s due to: %s.', path, error);
 				handleClientState(getClientState(client));
 			} else {
-				console.log("Children nodes of ", path, children);
+				console.log("Children nodes of ", path, children.length , children);
 				for (var i = 0; i < children.length; i++) {
 					if (path == "/") path = "";	// strip root
 					var fullpath  = path + "/" + children[i];
@@ -479,10 +479,6 @@ function getAllPaths(client) {
 }
 module.exports.getAllPaths = getAllPaths;
 
-function getNode(client, node) {
-	return getNode(node);
-}
-module.exports.getNode = getNode;
 
 var temp_paths = [];
 function scanAllChildren(client, path) {
@@ -531,6 +527,7 @@ function saveNode(node, data, version) {
 function getNode(node) {
 	return zk_node_data[node];
 }
+module.exports.getNode = getNode;
 
 function rmNode(node) {
 	delete zk_node_data[node];
