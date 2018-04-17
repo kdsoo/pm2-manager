@@ -35,9 +35,11 @@ function initClient() {
 
 }
 
+var clientLock = false;
 function connectClient() {
 	initClient();
 	client.connect();
+	clientLock = false;
 }
 
 function disconnectClient() {
@@ -69,10 +71,13 @@ function handleClientState(state) {
 		case 0:
 			console.log("DISCONNECTED");
 			setServiceReady(false);
-			setTimeout(function() {
-				console.log("Trying to reconnect (DISCONNECTED)");
-				connectClient();
-			}, 10 * 1000);
+			if (clientLock == false) {
+				clientLock = true;
+				setTimeout(function() {
+					console.log("Trying to reconnect (DISCONNECTED)");
+					connectClient();
+				}, 10 * 1000);
+			}
 			break;
 		case 3:
 			console.log("SYNC_CONNECTED");
@@ -90,10 +95,13 @@ function handleClientState(state) {
 		case -122:
 			console.log("EXPIRED");
 			disconnectClient();
-			setTimeout(function() {
-				console.log("Trying to reconnect (EXPIRED)");
-				connectClient();
-			}, 10 * 1000);
+			if (clientLock == false) {
+				clientLock = true;
+				setTimeout(function() {
+					console.log("Trying to reconnect (EXPIRED)");
+					connectClient();
+				}, 10 * 1000);
+			}
 			break;
 		default:
 			console.log("Unknown client state");
