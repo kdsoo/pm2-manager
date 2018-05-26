@@ -24,6 +24,8 @@ function initClient() {
 
 		watchNodeTree(client, config.get("zookeeper.namespace.zkroot"));
 		watchNodeData(client, config.get("zookeeper.namespace.zkroot"));
+
+		reclaiming = false;
 	});
 
 	client.on('disconnected', function () {
@@ -94,6 +96,7 @@ function handleClientState(state) {
 			break;
 		case -122:
 			console.log("EXPIRED");
+			reclaiming = true;
 			disconnectClient();
 			if (clientLock == false) {
 				clientLock = true;
@@ -435,7 +438,9 @@ function getData(client, path) {
 							// node refreshed. do not notify
 						} else {
 							// broadcast event
-							notifyZKevent(event, "getData");
+							if (reclaiming == false) {
+								notifyZKevent(event, "getData");
+							}
 						}
 					});
 				}, 3000);
@@ -479,6 +484,7 @@ function getData(client, path) {
 	});
 }
 
+var reclaiming = false;	// on expire
 var zk_paths = [];
 var zk_nodes = [];
 var zk_node_data = {};
