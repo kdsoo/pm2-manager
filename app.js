@@ -129,6 +129,9 @@ serviceEvent.on('pm2', function(msg) {
 						}
 					});
 					break;
+				case "restart":
+					console.log("pm2 manager restart triggered");
+					process.exit();
 				default:
 					break;
 			}

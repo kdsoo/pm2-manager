@@ -53,6 +53,17 @@ router.get('/upgrade/all', function(req, res, next) {
 	});
 });
 
+router.get('/restart', function(req, res, next) {
+	process.exit();
+});
+
+router.get('/restart/all', function(req, res, next) {
+	var msg = {cmd: "send", payload: {cmd: "restart", target: "all", claim: os.hostname()}};
+	emitServiceEvent("mqtt", msg, false, function(ret) {
+		res.send("SeaHaven pm2 manager service restart triggered");
+	});
+});
+
 router.get('/service/list', function(req, res, next) {
 	var command = {cmd: "list"};
 	emitServiceEvent("pm2", command, true, function(ret) {
