@@ -70,7 +70,7 @@ function refreshTimer(msg) {
 	HBhostTimer[id] = setTimeout(function() {
 		// double check for temporal network troubles
 		HBhostTimer[id] = setTimeout(function() {
-			if (config.has("messaging.notify")) {
+			if (config.has("messaging.notify") && globalNotify == true) {
 				if (config.get("messaging.notify") == true) {
 					// alert dead host
 					var Msg = {cmd:"PUSH", payload: {target: "ALL", title: report, msg: report}};

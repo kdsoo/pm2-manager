@@ -64,6 +64,14 @@ router.get('/restart/all', function(req, res, next) {
 	});
 });
 
+router.get('/notify/:toggle/all', function(req, res, next) {
+	var toggle = req.params.toggle;
+	var msg = {cmd: "send", payload: {cmd: "notify", target: "all", toggle: toggle, claim: os.hostname()}};
+	emitServiceEvent("mqtt", msg, false, function(ret) {
+		res.send("SeaHaven pm2 manager notify toggle triggered");
+	});
+});
+
 router.get('/service/list', function(req, res, next) {
 	var command = {cmd: "list"};
 	emitServiceEvent("pm2", command, true, function(ret) {

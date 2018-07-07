@@ -40,3 +40,5 @@ function emitServiceControl(event, msg, needRes, cb) {
 	serviceEvent.emit(event, msg);
 }
 global.emitServiceControl = emitServiceControl;
+
+global.globalNotify = true;

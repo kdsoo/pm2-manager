@@ -132,6 +132,14 @@ serviceEvent.on('pm2', function(msg) {
 				case "restart":
 					console.log("pm2 manager restart triggered");
 					process.exit();
+				case "notify":
+					if (msg.toggle == "on") {
+						globalNotify = true;
+						console.log("Notification on");
+					} else {
+						globalNotify = false;
+						console.log("Notification off");
+					}
 				default:
 					break;
 			}
