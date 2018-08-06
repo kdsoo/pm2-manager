@@ -18,12 +18,14 @@ getRevHash(function(err, version, timestamp, dirty) {
 });
 
 module.exports.getVersion = function(cb) {
-	isRepoDirty(function(err, isDirty) {
+	getRevHash(function(err, version, timestamp, dirty) {
 		if (err) {
-			gitVersion.dirty = err;
-		} else {
-			gitVersion.dirty = isDirty;
+			console.error(err);
+			gitVersion = err;
 		}
+		gitVersion = {"host": os.hostname(), "node": process.version
+		, "service": version, "timestamp": timestamp, "dirty": dirty};
+		console.log(gitVersion);
 		cb(gitVersion);
 	});
 };
