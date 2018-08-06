@@ -64,6 +64,24 @@ router.get('/restart/all', function(req, res, next) {
 	});
 });
 
+router.get('/notify', function(req, res, next) {
+	var noti = {notification: globalNotify};
+	res.json(noti);
+});
+
+router.post('/notify/:toggle', function(req, res, next) {
+	var toggle = req.params.toggle;
+	var status = 503;
+	var ret = {ok: false};
+	if (toggle === "true" || toggle === "false") {
+		globalNotify = toggle;
+		ret.ok = true;
+	}
+	console.log("/notify toggle", toggle);
+	res.status(status);
+	res.json(ret);
+});
+
 router.get('/notify/:toggle/all', function(req, res, next) {
 	var toggle = req.params.toggle;
 	var msg = {cmd: "send", payload: {cmd: "notify", target: "all", toggle: toggle, claim: os.hostname()}};

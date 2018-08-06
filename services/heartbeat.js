@@ -146,6 +146,7 @@ serviceEvent.on('pm2', function(msg) {
 								payload.addr = ip.address();
 								payload.mac = getMacAddr(ip.address());
 								payload.uptime = platform.serviceUptimeSync();
+								payload.notification = globalNotify;
 								payload.type = "hb-res";
 								payload.requestID = msg.requestID;
 								payload.version = ver;

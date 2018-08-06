@@ -14,10 +14,11 @@ $(document).ready(function () {
 		var ver = document.createElement("div");
 		var timestamp = document.createElement("div");
 		var uptime = document.createElement("div");
+		var notification = document.createElement("div");
 		var services = document.createElement("div");
 		alive.className = "col-xs-1 col-sm-1 col-lg-1";
 		alive.innerHTML = "alive";
-		name.className = "col-xs-3 col-sm-3 col-lg-3";
+		name.className = "col-xs-2 col-sm-2 col-lg-2";
 		name.innerHTML = "hostname";
 		addr.className = "col-xs-2 col-sm-2 col-lg-2";
 		addr.innerHTML = "adderss";
@@ -27,6 +28,8 @@ $(document).ready(function () {
 		timestamp.innerHTML = "released";
 		uptime.className = "col-xs-1 col-sm-1 col-lg-1";
 		uptime.innerHTML = "uptime";
+		notification.className = "col-xs-1 col-sm-1 col-lg-1";
+		notification.innerHTML = "noti";
 		services.className = "col-xs-1 col-sm-1 col-lg-1";
 		services.innerHTML = "services";
 		header.appendChild(alive);
@@ -35,6 +38,7 @@ $(document).ready(function () {
 		header.appendChild(ver);
 		header.appendChild(timestamp);
 		header.appendChild(uptime);
+		header.appendChild(notification);
 		header.appendChild(services);
 	});
 });
@@ -96,7 +100,7 @@ function setHostUptime(id, uptime) {
 	if (ut) ut.innerHTML = uptime;
 }
 
-function showHost(uuid, host, address, version, timestamp, num) {
+function showHost(uuid, host, address, version, timestamp, noti, num) {
 	var id = uuid;
 	var holder = document.getElementById("health");
 
@@ -109,15 +113,18 @@ function showHost(uuid, host, address, version, timestamp, num) {
 	var ver = document.createElement("div");
 	var time = document.createElement("div");
 	var uptime = document.createElement("div");
+	var notification = document.createElement("div");
 	var services = document.createElement("div");
 	alive.id = "indicator-" + id;
 	alive.className = "col-xs-1 col-sm-1 col-lg-1";
-	name.className = "col-xs-3 col-sm-3 col-lg-3";
+	name.className = "col-xs-2 col-sm-2 col-lg-2";
 	addr.className = "col-xs-2 col-sm-2 col-lg-2";
 	ver.className = "col-xs-1 col-sm-1 col-lg-1";
 	time.className = "col-xs-3 col-sm-3 col-lg-3";
 	uptime.id = "uptime-" + id;
 	uptime.className = "col-xs-1 col-sm-1 col-lg-1";
+	notification.id = "notification-" + id;
+	notification.className = "col-xs-1 col-sm-1 col-lg-1";
 	services.className = "col-xs-1 col-sm-1 col-lg-1";
 
 	hostdiv.appendChild(alive);
@@ -126,17 +133,20 @@ function showHost(uuid, host, address, version, timestamp, num) {
 	hostdiv.appendChild(ver);
 	hostdiv.appendChild(time);;
 	hostdiv.appendChild(uptime);
+	hostdiv.appendChild(notification);
 	hostdiv.appendChild(services);
 
 	var nametext = document.createTextNode(host);
 	var addrtext = document.createTextNode(address);
 	var vertext = document.createTextNode(version);
 	var timetext = document.createTextNode(timestamp);
+	var notitext = document.createTextNode(noti);
 	var servicestext = document.createTextNode(num);
 	name.appendChild(nametext);
 	addr.appendChild(addrtext);
 	ver.appendChild(vertext);
 	time.appendChild(timetext);
+	notification.appendChild(notitext);
 	services.appendChild(servicestext);
 	holder.appendChild(hostdiv);
 }
