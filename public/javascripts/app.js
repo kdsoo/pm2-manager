@@ -156,3 +156,9 @@ function updateCounter() {
 	var totalNum = document.getElementById("health").childElementCount;
 	counter.innerHTML = totalNum;
 }
+
+function updateNotiIndicator(uuid, status) {
+	var id = "notification-" + uuid;
+	var noti = document.getElementById(id);
+	if (noti) noti.innerHTML = status;
+}

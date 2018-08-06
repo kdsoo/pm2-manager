@@ -30,6 +30,7 @@ socket.on("heartbeat", function(data) {
 			updateCounter();
 			refreshTimer(id);
 			setHostUptime(id, json.uptime);
+			updateNotiIndicator(id, json.notification);
 		}
 	}
 });
