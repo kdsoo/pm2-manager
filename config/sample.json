@@ -8,7 +8,8 @@
 	},
 	"messaging": {
 		"pushbullet": {
-			"apikey": GET_KEY_FROM_PUSHBULLET_WITH_YOUR_CREDENTIAL
+			"apikey": GET_KEY_FROM_PUSHBULLET_WITH_YOUR_CREDENTIAL,
+			"enabled": false
 		},
 		"telegram": {
 			"name": TELEGRAM_NAME,
