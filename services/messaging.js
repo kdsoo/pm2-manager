@@ -3,6 +3,7 @@ var os = require('os');
 var request = require('request');
 var PushBullet = require('pushbullet');
 var apiKey = config.get("messaging.pushbullet.apikey");
+var isPushbulletEnabled = config.get("messaging.pushbullet.enabled");
 var pusher = new PushBullet(apiKey);
 var telegram_endpoint = "https://api.telegram.org/bot";
 var telegram_apikey = config.get("messaging.telegram.apikey");
@@ -84,7 +85,9 @@ serviceEvent.on('messaging', function(msg) {
 							sendTelegram(msg.payload.title, msg.payload.msg, function(e,r,b) {});
 							break;
 						case "PUSHBULLET":
-							sendPushbullet("", msg.payload.title, msg.payload.msg, function(e,r) {});
+							if (isPushbulletEnabled) {
+								sendPushbullet("", msg.payload.title, msg.payload.msg, function(e,r) {});
+							}
 							break;
 						default:
 							break;
